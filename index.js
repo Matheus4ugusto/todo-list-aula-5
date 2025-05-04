@@ -5,8 +5,10 @@ const taskDate = document.getElementById('task-date'); // Campo de data para a t
 const taskList = document.getElementById('task-list'); // Lista de tarefas pendentes
 const concludedList = document.getElementById('concluded-list'); // Lista de tarefas concluídas
 
-const actualVersion = '1.0.1'; // Versão atual do aplicativo
-const patchNote = 'Correção de bugs e adição de alertas de novas versões'; // Notas da versão atual
+const actualVersion = '1.1.0'; // Versão atual do aplicativo
+const patchNote = 'Adiciona alerta de quantidade de tarefas pendentes para o dia atual'; // Notas da versão atual
+
+let count = 0; // Contador de tarefas para hoje
 
 const lastVersion = localStorage.getItem('lastVersion'); // Obtém a versão anterior do aplicativo do localStorage
 if (lastVersion !== actualVersion) { // Verifica se a versão atual é diferente da versão anterior
@@ -55,6 +57,7 @@ function loadTasks() {
         } else if (isToday) {
             status = 'Hoje';
             statusClass = 'task-today';
+            count++;
         } else if (dueDate > currentDate) {
             status = 'Futura';
             statusClass = 'task-future';
@@ -102,6 +105,16 @@ function loadTasks() {
             saveTasks(); // Atualiza o localStorage
         });
     });
+
+    if (count === 1) {
+        alert(`Você tem 1 tarefa para hoje!`); // Alerta o usuário sobre as tarefas para hoje
+    }
+    if (count > 1) {
+        alert(`Você tem ${count} tarefas para hoje!`); // Alerta o usuário sobre as tarefas para hoje
+    }
+    if (count === 0) {
+        alert(`Parabéns, você não tem tarefas para hoje!`); // Alerta o usuário que não há tarefas para hoje
+    }
 }
 
 // Adiciona um evento de envio ao formulário
