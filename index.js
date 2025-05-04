@@ -5,6 +5,18 @@ const taskDate = document.getElementById('task-date'); // Campo de data para a t
 const taskList = document.getElementById('task-list'); // Lista de tarefas pendentes
 const concludedList = document.getElementById('concluded-list'); // Lista de tarefas concluídas
 
+const actualVersion = '1.0.1'; // Versão atual do aplicativo
+const patchNote = 'Correção de bugs e adição de alertas de novas versões'; // Notas da versão atual
+
+const lastVersion = localStorage.getItem('lastVersion'); // Obtém a versão anterior do aplicativo do localStorage
+if (lastVersion !== actualVersion) { // Verifica se a versão atual é diferente da versão anterior
+    
+    alert(`A aplicação foi atualizada automaticamente para a versão ${actualVersion}`); // Alerta o usuário sobre a nova versão
+    localStorage.setItem('lastVersion', actualVersion); // Atualiza a versão no localStorage
+    localStorage.setItem('patchNote', patchNote); // Atualiza as notas da versão no localStorage
+    alert(`Notas da versão: ${patchNote}`); // Alerta o usuário sobre as notas da versão
+}
+
 // Função para salvar tarefas no localStorage
 function saveTasks() {
     const tasks = []; // Array para armazenar as tarefas pendentes
@@ -26,12 +38,35 @@ function saveTasks() {
 function loadTasks() {
     const tasks = JSON.parse(localStorage.getItem('tasks')) || []; // Carrega as tarefas pendentes ou inicializa como vazio
     tasks.forEach((taskText) => {
+
+        const currentDate = new Date(); // Data atual
+        const dueDate = new Date(taskText.split(' - ')[1]); // Obtém a data da tarefa a partir do texto
+        let status; // Define o status da tarefa
+        let statusClass; // Define a classe CSS com base no status
+
+        const isToday =
+        dueDate.getFullYear() === currentDate.getFullYear() &&
+        dueDate.getMonth() === currentDate.getMonth() &&
+        dueDate.getDate() + 1 === currentDate.getDate(); // Verifica se a data é hoje
+        
+        if (dueDate < currentDate && !isToday) {
+            status = 'Atrasada';
+            statusClass = 'task-late';
+        } else if (isToday) {
+            status = 'Hoje';
+            statusClass = 'task-today';
+        } else if (dueDate > currentDate) {
+            status = 'Futura';
+            statusClass = 'task-future';
+        }
+        
         const taskItem = document.createElement('li'); // Cria um elemento <li> para a tarefa
         taskItem.innerHTML = `
             <span>${taskText}</span>
             <button class="conclude-btn">Concluir</button>
         `;
         taskList.appendChild(taskItem); // Adiciona a tarefa à lista de pendentes
+        taskItem.classList.add(statusClass);
 
         const concludeButton = taskItem.querySelector('.conclude-btn'); // Botão para concluir a tarefa
         concludeButton.addEventListener('click', () => {
