@@ -5,8 +5,8 @@ const taskDate = document.getElementById('task-date'); // Campo de data para a t
 const taskList = document.getElementById('task-list'); // Lista de tarefas pendentes
 const concludedList = document.getElementById('concluded-list'); // Lista de tarefas concluídas
 
-const actualVersion = '1.1.0'; // Versão atual do aplicativo
-const patchNote = 'Adiciona alerta de quantidade de tarefas pendentes para o dia atual'; // Notas da versão atual
+const actualVersion = '1.1.1'; // Versão atual do aplicativo
+const patchNote = 'Adiciona alerta de quantidade de tarefas pendentes para o dia atual e corrige bugs relacionado a datas e exibição de tasks concluidas'; // Notas da versão atual
 
 let count = 0; // Contador de tarefas para hoje
 
@@ -42,7 +42,8 @@ function loadTasks() {
     tasks.forEach((taskText) => {
 
         const currentDate = new Date(); // Data atual
-        const dueDate = new Date(taskText.split(' - ')[1]); // Obtém a data da tarefa a partir do texto
+        const dueDateParts = taskText.split(' - ')[1].split('/'); // Divide a data no formato dd/mm/aaaa
+    const dueDate = new Date(dueDateParts[2], dueDateParts[1] - 1, dueDateParts[0]); // Cria a data no formato correto
         let status; // Define o status da tarefa
         let statusClass; // Define a classe CSS com base no status
 
@@ -50,6 +51,7 @@ function loadTasks() {
         dueDate.getFullYear() === currentDate.getFullYear() &&
         dueDate.getMonth() === currentDate.getMonth() &&
         dueDate.getDate() + 1 === currentDate.getDate(); // Verifica se a data é hoje
+        
         
         if (dueDate < currentDate && !isToday) {
             status = 'Atrasada';
@@ -152,7 +154,7 @@ taskForm.addEventListener('submit', (event) => {
     }
 
     const taskItem = document.createElement('li'); // Cria um elemento <li> para a tarefa
-    const formattedDate = dueDate.toLocaleDateString('pt-BR', { timeZone: 'UTC' }); // Formata a data para o formato brasileiro
+    const formattedDate = `${(dueDate.getDate() + 1).toString().padStart(2, '0')}/${(dueDate.getMonth() + 1).toString().padStart(2, '0')}/${dueDate.getFullYear()}`;
     taskItem.innerHTML = `
         <span>${taskText} - ${formattedDate} - ${status}</span>
         <button class="conclude-btn">Concluir</button>
@@ -163,17 +165,21 @@ taskForm.addEventListener('submit', (event) => {
     taskList.appendChild(taskItem);
 
     // Adiciona o evento de conclusão ao botão
-    const concludeButton = taskItem.querySelector('.conclude-btn');
+    const concludeButton = taskItem.querySelector('.conclude-btn'); // Botão para concluir a tarefa
     concludeButton.addEventListener('click', () => {
+        // Divide o texto da tarefa em partes (texto e data)
+        const taskTextParts = taskItem.querySelector('span').textContent.split(' - '); // Divide o texto da tarefa
+        const taskTextWithoutStatus = `${taskTextParts[0]} - ${taskTextParts[1]}`; // Mantém apenas o texto e a data
+    
         const concludedItem = document.createElement('li'); // Cria um elemento <li> para a tarefa concluída
         concludedItem.innerHTML = `
-            <span>${taskText} - ${formattedDate}</span>
+            <span>${taskTextWithoutStatus}</span>
             <button class="delete-btn">Excluir</button>
         `;
         concludedList.appendChild(concludedItem); // Adiciona à lista de concluídas
         taskItem.remove(); // Remove da lista de pendentes
         saveTasks(); // Atualiza o localStorage
-
+    
         const deleteButton = concludedItem.querySelector('.delete-btn'); // Botão para excluir a tarefa concluída
         deleteButton.addEventListener('click', () => {
             concludedItem.remove(); // Remove a tarefa concluída
