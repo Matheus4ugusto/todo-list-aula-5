@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de tarefas</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <header>
+        <h1>Lista de tarefas</h1>
+    </header>
+    <main>
+        <section id="new-task">
+            <h2>Adicionar nova tarefa</h2>
+            <form id="task-form">
+                <input type="text" id="task-input" placeholder="Digite uma nova tarefa" required>
+                <input type="date" id="task-date" required>
+                <button type="submit">Adicionar</button>
+            </form>
+        </section>
+        <section id="tasks-list">
+            <h2>Tarefas a fazer</h2>
+            <ul id="task-list">
+                <!-- As tarefas serão adicionadas aqui dinamicamente -->
+            </ul>
+        </section>
+        <section id="completed-tasks">
+            <h2>Tarefas concluídas</h2>
+            <ul id="concluded-list">
+                <!-- As tarefas concluídas serão adicionadas aqui dinamicamente -->
+            </ul>
+    </main>
+    <script src="index.js"></script>
+</body>
+</html>
