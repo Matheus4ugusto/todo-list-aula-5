@@ -8,7 +8,7 @@ const concludedList = document.getElementById('concluded-list'); // Lista de tar
 const actualVersion = '1.1.0'; // Versão atual do aplicativo
 const patchNote = 'Adiciona alerta de quantidade de tarefas pendentes para o dia atual'; // Notas da versão atual
 
-const count = 0; // Contador de tarefas para hoje
+let count = 0; // Contador de tarefas para hoje
 
 const lastVersion = localStorage.getItem('lastVersion'); // Obtém a versão anterior do aplicativo do localStorage
 if (lastVersion !== actualVersion) { // Verifica se a versão atual é diferente da versão anterior
